@@ -8,12 +8,10 @@
 * paramList(List<Object>) 参数列表
 * address(String) zk地址
 * version(String) 接口版本号--可不填
-* group(String) 接口分组--可不填
+* group(String) 接口分组--可不填<br>
 
 返回Object，直接强制转换成返回结果类使用
 需要捕获GetGenericServiceFailedException异常
-
-<br>
 
 ## 引入目标接口调用
 步骤如下：
