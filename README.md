@@ -13,6 +13,7 @@
 返回Object，直接强制转换成返回结果类使用
 需要捕获GetGenericServiceFailedException异常
 
+<br>
 
 ## 引入目标接口调用
 步骤如下：
