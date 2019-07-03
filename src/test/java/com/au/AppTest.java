@@ -2,10 +2,6 @@ package com.au;
 
 import com.au.exception.GetGenericServiceFailedException;
 import com.au.exception.InitializationFailedException;
-import com.jiaxuan.heaven.book.dubbo.api.IFieldDubboService;
-import com.jiaxuan.heaven.book.dubbo.domain.base.FieldBase;
-import com.jiaxuan.watch.dogs.api.UserService;
-import com.jiaxuan.watch.dogs.api.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
 
