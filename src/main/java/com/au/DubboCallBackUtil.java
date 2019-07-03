@@ -5,12 +5,14 @@ import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.au.exception.GetGenericServiceFailedException;
+import com.au.exception.ParamException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -44,22 +46,20 @@ public class DubboCallBackUtil {
      * @return
      * @throws GetGenericServiceFailedException
      */
-    public static Object invoke(String interfaceName, String methodName, List<Object> paramList, String address,
-                                String version, String group) throws GetGenericServiceFailedException, ClassNotFoundException {
+    public static Object invoke(String interfaceName, String methodName, List<String> paramTypes, List<Object> paramValues, String address,
+                                String version, String group) throws GetGenericServiceFailedException, ParamException {
         ReferenceConfig reference = getReferenceConfig(interfaceName, address, group, version);
         if (null != reference) {
             GenericService genericService = (GenericService) reference.get();
             if (genericService == null) {
                 throw new GetGenericServiceFailedException();
             }
-            Object[] paramObject = null;
-            if (!CollectionUtils.isEmpty(paramList)) {
-                paramObject = new Object[paramList.size()];
-                for (int i = 0; i < paramList.size(); i++) {
-                    paramObject[i] = paramList.get(i);
-                }
+            if (Objects.nonNull(paramTypes) && Objects.nonNull(paramValues) && !Objects.equals(paramValues.size(), paramTypes.size())){
+                throw new ParamException();
             }
-            Object resultParam = genericService.$invoke(methodName, getMethodParamType(interfaceName, methodName), paramObject);
+            String[] paramTypeArray = paramTypes.toArray(new String[0]);
+            Object[] paramValueArray = paramValues.toArray();
+            Object resultParam = genericService.$invoke(methodName, paramTypeArray, paramValueArray);
             return resultParam;
         }
         return null;
@@ -91,15 +91,14 @@ public class DubboCallBackUtil {
     }
 
     private static ReferenceConfig getReferenceConfig(String interfaceName, String address,
-                                                      String group, String version) throws ClassNotFoundException{
+                                                      String group, String version) {
         String referenceKey = interfaceName;
         ReferenceConfig referenceConfig = referenceCache.get(referenceKey);
         if (null == referenceConfig) {
             referenceConfig = new ReferenceConfig<>();
             referenceConfig.setApplication(application);
             referenceConfig.setRegistry(getRegistryConfig(address, group, version));
-            Class interfaceClass = Class.forName(interfaceName);
-            referenceConfig.setInterface(interfaceClass);
+            referenceConfig.setInterface(interfaceName);
             if (StringUtils.isNotEmpty(version)) {
                 referenceConfig.setVersion(version);
             }
@@ -108,30 +107,5 @@ public class DubboCallBackUtil {
             referenceCache.put(referenceKey, referenceConfig);
         }
         return referenceConfig;
-    }
-
-    private static String[] getMethodParamType(String interfaceName, String methodName) {
-        try {
-            //创建类
-            Class<?> class1 = Class.forName(interfaceName);
-            //获取所有的公共的方法
-            Method[] methods = class1.getMethods();
-            for (Method method : methods) {
-                if (method.getName().equals(methodName)) {
-                    Class[] paramClassList = method.getParameterTypes();
-                    String[] paramTypeList = new String[paramClassList.length];
-                    int i = 0;
-                    for (Class className : paramClassList) {
-                        paramTypeList[i] = className.getTypeName();
-                        i++;
-                    }
-                    return paramTypeList;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
     }
 }

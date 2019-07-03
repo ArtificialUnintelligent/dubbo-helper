@@ -2,6 +2,7 @@ package com.au;
 
 import com.au.exception.GetGenericServiceFailedException;
 import com.au.exception.InitializationFailedException;
+import com.au.exception.ParamException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,16 +45,18 @@ public class AppTest
 
     @Test
     public void testCallBack(){
+        List<String> types = new ArrayList<>();
+        types.add("");
         List<Object> params = new ArrayList<>();
         String id = "";
         params.add(id);
         try {
             //以下参数替换为自己项目的信息
-            Object r = DubboCallBackUtil.invoke("", "", params, "", null, null);
+            Object r = DubboCallBackUtil.invoke("",
+                    "", types, params, "",
+                    null, null);
             Assert.assertNotNull(r);
-        } catch (GetGenericServiceFailedException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (GetGenericServiceFailedException | ParamException e) {
             e.printStackTrace();
         }
     }

@@ -2,11 +2,11 @@
 一个dubbo调用的小型脚本
 
 ## 泛化调用
-先在项目中引入被调用服务提供的jar包
 调用DubboCallBackUtil.invoke方法，入参信息如下：
 * interfaceName(String) 接口地址-要求全限定名 例如com.au.service.UserService
 * methodName(String) 方法名称
-* paramList(List<Object>) 参数列表
+* paramTypes(List<String>) 参数名称列表 注意这里需要引入包名，如java.lang.String
+* paramValues(List<Object>) 参数列表
 * address(String) zk地址
 * version(String) 接口版本号--可不填
 * group(String) 接口分组--可不填<br>
