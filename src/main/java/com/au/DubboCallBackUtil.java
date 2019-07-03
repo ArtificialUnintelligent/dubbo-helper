@@ -45,7 +45,7 @@ public class DubboCallBackUtil {
      * @throws GetGenericServiceFailedException
      */
     public static Object invoke(String interfaceName, String methodName, List<Object> paramList, String address,
-                                String version, String group) throws GetGenericServiceFailedException {
+                                String version, String group) throws GetGenericServiceFailedException, ClassNotFoundException {
         ReferenceConfig reference = getReferenceConfig(interfaceName, address, group, version);
         if (null != reference) {
             GenericService genericService = (GenericService) reference.get();
@@ -91,25 +91,21 @@ public class DubboCallBackUtil {
     }
 
     private static ReferenceConfig getReferenceConfig(String interfaceName, String address,
-                                                      String group, String version) {
+                                                      String group, String version) throws ClassNotFoundException{
         String referenceKey = interfaceName;
         ReferenceConfig referenceConfig = referenceCache.get(referenceKey);
         if (null == referenceConfig) {
-            try {
-                referenceConfig = new ReferenceConfig<>();
-                referenceConfig.setApplication(application);
-                referenceConfig.setRegistry(getRegistryConfig(address, group, version));
-                Class interfaceClass = Class.forName(interfaceName);
-                referenceConfig.setInterface(interfaceClass);
-                if (StringUtils.isNotEmpty(version)) {
-                    referenceConfig.setVersion(version);
-                }
-                referenceConfig.setGeneric(true);
-
-                referenceCache.put(referenceKey, referenceConfig);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            referenceConfig = new ReferenceConfig<>();
+            referenceConfig.setApplication(application);
+            referenceConfig.setRegistry(getRegistryConfig(address, group, version));
+            Class interfaceClass = Class.forName(interfaceName);
+            referenceConfig.setInterface(interfaceClass);
+            if (StringUtils.isNotEmpty(version)) {
+                referenceConfig.setVersion(version);
             }
+            referenceConfig.setGeneric(true);
+
+            referenceCache.put(referenceKey, referenceConfig);
         }
         return referenceConfig;
     }

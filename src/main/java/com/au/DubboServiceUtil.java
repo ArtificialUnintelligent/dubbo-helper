@@ -55,7 +55,8 @@ public class DubboServiceUtil {
     @SuppressWarnings("unchecked")
     public <T> T getService(Class<T> clazz) {
         ReferenceConfigCache cache = ReferenceConfigCache.getCache();
-        return (T) SpringAopUtils.invoker(cache.get(getReferenceConfig(clazz)), new LogMethodInterceptor(clazz));
+        LogMethodInterceptor interceptor = new LogMethodInterceptor(clazz);
+        return (T) SpringAopUtils.invoker(cache.get(getReferenceConfig(clazz)), interceptor);
     }
 
     @SuppressWarnings("unchecked")

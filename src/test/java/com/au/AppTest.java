@@ -2,6 +2,10 @@ package com.au;
 
 import com.au.exception.GetGenericServiceFailedException;
 import com.au.exception.InitializationFailedException;
+import com.jiaxuan.heaven.book.dubbo.api.IFieldDubboService;
+import com.jiaxuan.heaven.book.dubbo.domain.base.FieldBase;
+import com.jiaxuan.watch.dogs.api.UserService;
+import com.jiaxuan.watch.dogs.api.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,8 +31,8 @@ public class AppTest
     @Test
     public void testService(){
         DubboConfig dubboConfig = new DubboConfig();
-        dubboConfig.setApplicationName("rich-man");
-        dubboConfig.setRegistryAddress("zookeeper://dev1.zk.scsite.net:2181");
+        dubboConfig.setApplicationName("");
+        dubboConfig.setRegistryAddress("");
         DubboServiceUtil dubboServiceUtil = null;
         try {
             dubboServiceUtil = DubboServiceUtil.buildDubboServiceUtil(dubboConfig);
@@ -45,13 +49,15 @@ public class AppTest
     @Test
     public void testCallBack(){
         List<Object> params = new ArrayList<>();
-        String id = "04cXQ0ez4P";
+        String id = "";
         params.add(id);
         try {
             //以下参数替换为自己项目的信息
-            Object r = DubboCallBackUtil.invoke("com.au.xx.UserService", "get", params, "", null, null);
+            Object r = DubboCallBackUtil.invoke("", "", params, "", null, null);
             Assert.assertNotNull(r);
         } catch (GetGenericServiceFailedException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
